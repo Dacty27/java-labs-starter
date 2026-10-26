@@ -1,8 +1,5 @@
 package edu.course.lab01;
 
-/**
- * Небольшие методы для первой лабораторной работы.
- */
 public final class CourseToolkit {
 
     private CourseToolkit() {

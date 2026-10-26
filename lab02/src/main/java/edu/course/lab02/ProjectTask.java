@@ -31,6 +31,7 @@ public class ProjectTask {
         return title;
     }
 
+
     public TaskStatus getStatus() {
         return status;
     }
