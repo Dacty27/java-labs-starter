@@ -142,4 +142,27 @@ class TaskFileLoaderTest {
         assertEquals(1, result.errors().size());
         assertEquals("header", result.errors().get(0).field());
     }
+    @Test
+    void quotedFieldWithSemicolon() throws IOException {
+        Path file = write(HEADER,
+                "T-101;\"Fix; retest\";backend;4;READY");
+
+        LoadResult result = loader.load(file);
+
+        assertTrue(result.errors().isEmpty());
+        assertEquals(1, result.tasks().size());
+        assertEquals("Fix; retest", result.tasks().get(0).title());
+    }
+
+    @Test
+    void unbalancedQuotesProduceError() throws IOException {
+        Path file = write(HEADER,
+                "T-101;\"Broken title;backend;4;READY");
+
+        LoadResult result = loader.load(file);
+
+        assertTrue(result.tasks().isEmpty());
+        assertEquals(1, result.errors().size());
+        assertEquals("row", result.errors().get(0).field());
+    }
 }

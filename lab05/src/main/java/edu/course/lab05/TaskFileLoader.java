@@ -47,18 +47,27 @@ public final class TaskFileLoader {
 
     private void parseLine(String line, int lineNumber,
                            List<Task> tasks, List<ValidationError> errors) {
-        String[] parts = line.split(";", -1);
-        if (parts.length != EXPECTED_FIELDS) {
+
+        List<String> parts;
+        try {
+            parts = RowSplitter.split(line);
+        } catch (IllegalArgumentException e) {
             errors.add(new ValidationError(lineNumber, "row",
-                    "expected " + EXPECTED_FIELDS + " fields, got " + parts.length));
+                    "unbalanced quotes: " + e.getMessage()));
             return;
         }
 
-        String id = parts[0].trim();
-        String title = parts[1].trim();
-        String category = parts[2].trim();
-        String hoursRaw = parts[3].trim();
-        String statusRaw = parts[4].trim();
+        if (parts.size() != EXPECTED_FIELDS) {
+            errors.add(new ValidationError(lineNumber, "row",
+                    "expected " + EXPECTED_FIELDS + " fields, got " + parts.size()));
+            return;
+        }
+
+        String id = parts.get(0).trim();
+        String title = parts.get(1).trim();
+        String category = parts.get(2).trim();
+        String hoursRaw = parts.get(3).trim();
+        String statusRaw = parts.get(4).trim();
 
         if (id.isEmpty()) {
             errors.add(new ValidationError(lineNumber, "id", "id is empty"));
